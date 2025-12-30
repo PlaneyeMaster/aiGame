@@ -5609,8 +5609,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06ddfb74b0d544548a9e7be67e19c8c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScreenBoundary
-  wallThickness: 0.5
-  padding: 0.5
+  wallThickness: 3
+  padding: 3
 --- !u!4 &593577481
 Transform:
   m_ObjectHideFlags: 0
