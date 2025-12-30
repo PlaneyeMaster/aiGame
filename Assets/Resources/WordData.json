@@ -1,0 +1,154 @@
+{
+    "words": [
+        {
+            "word": "Cat",
+            "englishWord": "cat",
+            "category": "Noun"
+        },
+        {
+            "word": "Dog",
+            "englishWord": "dog",
+            "category": "Noun"
+        },
+        {
+            "word": "Robot",
+            "englishWord": "robot",
+            "category": "Noun"
+        },
+        {
+            "word": "Princess",
+            "englishWord": "princess",
+            "category": "Noun"
+        },
+        {
+            "word": "Alien",
+            "englishWord": "alien",
+            "category": "Noun"
+        },
+        {
+            "word": "Dragon",
+            "englishWord": "dragon",
+            "category": "Noun"
+        },
+        {
+            "word": "Unicorn",
+            "englishWord": "unicorn",
+            "category": "Noun"
+        },
+        {
+            "word": "Dinosaur",
+            "englishWord": "dinosaur",
+            "category": "Noun"
+        },
+        {
+            "word": "Fairy",
+            "englishWord": "fairy",
+            "category": "Noun"
+        },
+        {
+            "word": "Pirate",
+            "englishWord": "pirate",
+            "category": "Noun"
+        },
+        {
+            "word": "Dancing",
+            "englishWord": "dancing",
+            "category": "Adjective"
+        },
+        {
+            "word": "Fire-breathing",
+            "englishWord": "fire-breathing",
+            "category": "Adjective"
+        },
+        {
+            "word": "Giant",
+            "englishWord": "giant",
+            "category": "Adjective"
+        },
+        {
+            "word": "Transparent",
+            "englishWord": "transparent",
+            "category": "Adjective"
+        },
+        {
+            "word": "Rainbow",
+            "englishWord": "rainbow-colored",
+            "category": "Adjective"
+        },
+        {
+            "word": "Sparkling",
+            "englishWord": "sparkling",
+            "category": "Adjective"
+        },
+        {
+            "word": "Flying",
+            "englishWord": "flying",
+            "category": "Adjective"
+        },
+        {
+            "word": "Smiling",
+            "englishWord": "smiling",
+            "category": "Adjective"
+        },
+        {
+            "word": "Sleeping",
+            "englishWord": "sleeping",
+            "category": "Adjective"
+        },
+        {
+            "word": "Magical",
+            "englishWord": "magical",
+            "category": "Adjective"
+        },
+        {
+            "word": "In Space",
+            "englishWord": "in space",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "On Clouds",
+            "englishWord": "on the clouds",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "Under Sea",
+            "englishWord": "under the sea",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "In Forest",
+            "englishWord": "in the forest",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "In Castle",
+            "englishWord": "in a castle",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "Eating Pizza",
+            "englishWord": "eating pizza",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "Singing",
+            "englishWord": "singing",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "Painting",
+            "englishWord": "painting",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "On Rainbow",
+            "englishWord": "on a rainbow",
+            "category": "PlaceAction"
+        },
+        {
+            "word": "On Moon",
+            "englishWord": "on the moon",
+            "category": "PlaceAction"
+        }
+    ]
+}
