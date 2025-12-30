@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System;
 using System.Text;
+using System.IO;
 
 /// <summary>
 /// Stability AI - SDXL 1.0 전용 이미지 생성기 (안정성 최우선)
@@ -64,7 +65,7 @@ public class ImageGenerator : MonoBehaviour
 
             if (req.result == UnityWebRequest.Result.Success)
             {
-                ProcessResponse(req.downloadHandler.text);
+                ProcessResponse(req.downloadHandler.text, prompt);
             }
             else
             {
@@ -74,7 +75,7 @@ public class ImageGenerator : MonoBehaviour
         }
     }
 
-    private void ProcessResponse(string json)
+    private void ProcessResponse(string json, string prompt)
     {
         try
         {
@@ -106,6 +107,7 @@ public class ImageGenerator : MonoBehaviour
                 if (tex.LoadImage(imageBytes))
                 {
                     generatedImages[count] = tex;
+                    SaveImageToDisk(imageBytes, prompt, count);
                     count++;
                 }
 
@@ -122,6 +124,28 @@ public class ImageGenerator : MonoBehaviour
             Debug.LogError($"[ImageGenerator] Parse Error: {e.Message}");
             FinishWithPlaceholder();
         }
+    }
+
+    private void SaveImageToDisk(byte[] bytes, string prompt, int index)
+    {
+        string folderPath = Path.Combine(Application.dataPath, "GeneratedImages");
+        if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+        string sanitisedPrompt = prompt;
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+            sanitisedPrompt = sanitisedPrompt.Replace(c, '_');
+        }
+
+        if (sanitisedPrompt.Length > 50) sanitisedPrompt = sanitisedPrompt.Substring(0, 50);
+
+        string dateStr = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        string fileName = $"{sanitisedPrompt}_{dateStr}_{index}.png";
+
+        string fullPath = Path.Combine(folderPath, fileName);
+        File.WriteAllBytes(fullPath, bytes);
+
+        Debug.Log($"[ImageGenerator] Saved image to: {fullPath}");
     }
 
     private void FinishWithPlaceholder()
