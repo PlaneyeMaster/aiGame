@@ -256,9 +256,16 @@ public class StepWordSelector : MonoBehaviour
         UpdateBasketSlot(word);
         
         // 사운드 재생
-        if (WordSoundManager.Instance != null && word.sound != null)
+        if (WordSoundManager.Instance != null)
         {
-            WordSoundManager.Instance.PlayClip(word.sound);
+            // 단어 고유 사운드 (예: '고양이' 소리)
+            if (word.sound != null)
+            {
+                WordSoundManager.Instance.PlayClip(word.sound);
+            }
+            
+            // 슬롯 끼워지는 소리 (UI 효과음)
+            WordSoundManager.Instance.PlaySlotSound();
         }
         
         // 다음 단계로

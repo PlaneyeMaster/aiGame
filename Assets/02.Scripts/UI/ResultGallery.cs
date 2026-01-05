@@ -57,6 +57,12 @@ public class ResultGallery : MonoBehaviour
             // AspectRatioFitter fitter = resultImage.GetComponent<AspectRatioFitter>();
             // if (fitter != null) fitter.aspectRatio = (float)imgs[0].width / imgs[0].height;
         }
+
+        // 결과 완성 사운드 재생
+        if (WordSoundManager.Instance != null)
+        {
+            WordSoundManager.Instance.PlayCompleteSound();
+        }
     }
 
     public void HideGallery()
