@@ -3,10 +3,9 @@ using UnityEngine.Networking;
 using System.Collections;
 using System;
 using System.Text;
-using System.IO;
 
 /// <summary>
-/// Stability AI - SDXL 1.0 전용 이미지 생성기 (안정성 최우선)
+/// Stability AI - SDXL 1.0 이미지 생성기 (안전 필터 적용)
 /// </summary>
 public class ImageGenerator : MonoBehaviour
 {
@@ -15,42 +14,97 @@ public class ImageGenerator : MonoBehaviour
     [SerializeField] private int numberOfImages = 1;
     [SerializeField] private float timeout = 60f;
 
-    // SDXL 1.0 API Endpoint (가장 안정적)
+    // SDXL 1.0 API Endpoint
     private const string API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image";
 
-    // 프롬프트 스타일 (한국 어린이 애니메이션 스타일 - 핑*, 뽀*로 느낌)
-    private const string PROMPT_SUFFIX = ", cute korean anime style, chibi style, pastel colors, sparkly eyes, clean lines, high quality, vibrant, manhwa style for kids, soft lighting, 3d render";
+    // 어린이 친화적 스타일
+    private const string PROMPT_STYLE = ", cute korean anime style, chibi style, pastel colors, sparkly eyes, clean lines, high quality, vibrant, manhwa style for kids, soft lighting, 3d render, child-friendly, wholesome, bright and cheerful";
 
     private Texture2D[] generatedImages;
     private Action<Texture2D[]> onComplete;
 
-    public void GenerateImages(string keywords, Action<Texture2D[]> callback)
+    /// <summary>
+    /// 문장 기반 이미지 생성 (StepWordSelector 연동)
+    /// </summary>
+    public void GenerateFromSentence(Action<Texture2D[]> callback)
     {
-        // 프롬프트 강화
-        string enhancedPrompt = $"A cute illustration of {keywords}{PROMPT_SUFFIX}";
+        if (StepWordSelector.Instance == null || !StepWordSelector.Instance.IsSelectionComplete)
+        {
+            Debug.LogError("[ImageGenerator] Sentence is not complete!");
+            callback?.Invoke(null);
+            return;
+        }
 
-        Debug.Log($"[ImageGenerator] Requesting SDXL... Prompt: {enhancedPrompt}");
-        onComplete = callback;
-
-        StartCoroutine(GenerateRoutine(enhancedPrompt));
+        string sentence = StepWordSelector.Instance.GetPromptSentence();
+        GenerateImages(sentence, callback);
     }
 
-    private IEnumerator GenerateRoutine(string prompt)
+    /// <summary>
+    /// 키워드로 이미지 생성
+    /// </summary>
+    public void GenerateImages(string keywords, Action<Texture2D[]> callback)
     {
-        // SDXL 1.0 요청 바디
-        string body = $@"{{
-            ""text_prompts"": [
-                {{
-                    ""text"": ""{prompt}"",
-                    ""weight"": 1
-                }}
-            ],
-            ""cfg_scale"": 7,
-            ""height"": 1024,
-            ""width"": 1024,
-            ""samples"": {numberOfImages},
-            ""steps"": 30
-        }}";
+        // 콘텐츠 필터 적용
+        string safePrompt = keywords;
+        string negativePrompt = "";
+        
+        if (ContentFilter.Instance != null)
+        {
+            safePrompt = ContentFilter.Instance.SanitizePrompt(keywords);
+            negativePrompt = ContentFilter.Instance.GetNegativePrompt();
+        }
+        
+        // 프롬프트 구성
+        string enhancedPrompt = $"A cute illustration of {safePrompt}{PROMPT_STYLE}";
+
+        Debug.Log($"[ImageGenerator] Prompt: {enhancedPrompt}");
+        Debug.Log($"[ImageGenerator] Negative: {negativePrompt}");
+        
+        onComplete = callback;
+        StartCoroutine(GenerateRoutine(enhancedPrompt, negativePrompt));
+    }
+
+    private IEnumerator GenerateRoutine(string prompt, string negativePrompt)
+    {
+        // SDXL 1.0 요청 바디 (Negative Prompt 포함)
+        string body;
+        
+        if (!string.IsNullOrEmpty(negativePrompt))
+        {
+            body = $@"{{
+                ""text_prompts"": [
+                    {{
+                        ""text"": ""{EscapeJson(prompt)}"",
+                        ""weight"": 1
+                    }},
+                    {{
+                        ""text"": ""{EscapeJson(negativePrompt)}"",
+                        ""weight"": -1
+                    }}
+                ],
+                ""cfg_scale"": 7,
+                ""height"": 1024,
+                ""width"": 1024,
+                ""samples"": {numberOfImages},
+                ""steps"": 30
+            }}";
+        }
+        else
+        {
+            body = $@"{{
+                ""text_prompts"": [
+                    {{
+                        ""text"": ""{EscapeJson(prompt)}"",
+                        ""weight"": 1
+                    }}
+                ],
+                ""cfg_scale"": 7,
+                ""height"": 1024,
+                ""width"": 1024,
+                ""samples"": {numberOfImages},
+                ""steps"": 30
+            }}";
+        }
 
         using (UnityWebRequest req = new UnityWebRequest(API_URL, "POST"))
         {
@@ -65,7 +119,7 @@ public class ImageGenerator : MonoBehaviour
 
             if (req.result == UnityWebRequest.Result.Success)
             {
-                ProcessResponse(req.downloadHandler.text, prompt);
+                ProcessResponse(req.downloadHandler.text);
             }
             else
             {
@@ -75,7 +129,12 @@ public class ImageGenerator : MonoBehaviour
         }
     }
 
-    private void ProcessResponse(string json, string prompt)
+    private string EscapeJson(string text)
+    {
+        return text.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+    }
+
+    private void ProcessResponse(string json)
     {
         try
         {
@@ -107,7 +166,6 @@ public class ImageGenerator : MonoBehaviour
                 if (tex.LoadImage(imageBytes))
                 {
                     generatedImages[count] = tex;
-                    SaveImageToDisk(imageBytes, prompt, count);
                     count++;
                 }
 
@@ -124,28 +182,6 @@ public class ImageGenerator : MonoBehaviour
             Debug.LogError($"[ImageGenerator] Parse Error: {e.Message}");
             FinishWithPlaceholder();
         }
-    }
-
-    private void SaveImageToDisk(byte[] bytes, string prompt, int index)
-    {
-        string folderPath = Path.Combine(Application.dataPath, "GeneratedImages");
-        if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-
-        string sanitisedPrompt = prompt;
-        foreach (char c in Path.GetInvalidFileNameChars())
-        {
-            sanitisedPrompt = sanitisedPrompt.Replace(c, '_');
-        }
-
-        if (sanitisedPrompt.Length > 50) sanitisedPrompt = sanitisedPrompt.Substring(0, 50);
-
-        string dateStr = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        string fileName = $"{sanitisedPrompt}_{dateStr}_{index}.png";
-
-        string fullPath = Path.Combine(folderPath, fileName);
-        File.WriteAllBytes(fullPath, bytes);
-
-        Debug.Log($"[ImageGenerator] Saved image to: {fullPath}");
     }
 
     private void FinishWithPlaceholder()

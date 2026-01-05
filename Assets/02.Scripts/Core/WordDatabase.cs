@@ -2,20 +2,21 @@ using UnityEngine;
 using System.Linq;
 
 /// <summary>
-/// 단어 데이터베이스
+/// 단어 데이터베이스 - ScriptableObject 연동 버전
 /// </summary>
 public class WordDatabase : MonoBehaviour
 {
     public static WordDatabase Instance { get; private set; }
     
-    private WordData[] allWords;
+    [Header("Word Database Asset")]
+    [Tooltip("Project에서 생성한 WordDatabaseSO 에셋을 여기에 드래그")]
+    [SerializeField] private WordDatabaseSO databaseAsset;
     
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            LoadWords();
         }
         else
         {
@@ -23,31 +24,49 @@ public class WordDatabase : MonoBehaviour
         }
     }
     
-    private void LoadWords()
+    /// <summary>
+    /// 모든 단어 반환
+    /// </summary>
+    public WordDataSO[] GetAllWords()
     {
-        TextAsset jsonFile = Resources.Load<TextAsset>("WordData");
-        if (jsonFile != null)
+        if (databaseAsset == null)
         {
-            WordDataList dataList = JsonUtility.FromJson<WordDataList>(jsonFile.text);
-            allWords = dataList.words;
-            Debug.Log($"[WordDatabase] {allWords.Length}개 단어 로드");
+            Debug.LogError("[WordDatabase] Database asset not assigned!");
+            return new WordDataSO[0];
         }
-        else
-        {
-            Debug.LogError("[WordDatabase] WordData.json 없음!");
-            allWords = new WordData[0];
-        }
+        return databaseAsset.GetAllWords();
     }
     
-    public WordData[] GetAllWords() => allWords;
-    
-    public WordData[] GetWordsByCategory(WordCategory category)
+    /// <summary>
+    /// 슬롯 타입별 단어 반환
+    /// </summary>
+    public WordDataSO[] GetWordsBySlotType(WordSlotType slotType)
     {
-        return allWords.Where(w => w.GetCategory() == category).ToArray();
+        if (databaseAsset == null) return new WordDataSO[0];
+        return databaseAsset.GetWordsBySlotType(slotType);
     }
     
-    public WordData[] GetShuffledWords()
+    /// <summary>
+    /// 섞인 단어 목록 반환
+    /// </summary>
+    public WordDataSO[] GetShuffledWords()
     {
-        return allWords.OrderBy(x => Random.value).ToArray();
+        if (databaseAsset == null) return new WordDataSO[0];
+        return databaseAsset.GetShuffledWords();
     }
+    
+    /// <summary>
+    /// 누가? 단어들
+    /// </summary>
+    public WordDataSO[] GetSubjects() => GetWordsBySlotType(WordSlotType.Subject);
+    
+    /// <summary>
+    /// 무엇을? 단어들
+    /// </summary>
+    public WordDataSO[] GetObjects() => GetWordsBySlotType(WordSlotType.Object);
+    
+    /// <summary>
+    /// 해요? 단어들
+    /// </summary>
+    public WordDataSO[] GetVerbs() => GetWordsBySlotType(WordSlotType.Verb);
 }

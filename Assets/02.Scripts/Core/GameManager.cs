@@ -7,43 +7,29 @@ using System;
 /// </summary>
 public enum GameState
 {
-    Exploring,   // 탐색
-    Selecting,   // 선택 중
+    Selecting,   // 단어 선택 중
     Generating,  // 생성 중
     Viewing      // 결과 보기
 }
 
 /// <summary>
-/// 게임 매니저
+/// 게임 매니저 - StepWordSelector 연동
 /// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     
-    [Header("Settings")]
-    [SerializeField] private int minWordsToGenerate = 2;
-    [SerializeField] private int maxWordsToSelect = 3;
-    
     [Header("References")]
-    [SerializeField] private BasketController basketController;
     [SerializeField] private ImageGenerator imageGenerator;
     [SerializeField] private ResultGallery resultGallery;
     [SerializeField] private ParticleController particleController;
     
-    public GameState CurrentState { get; private set; } = GameState.Exploring;
-    
-    private List<WordData> selectedWords = new List<WordData>();
+    public GameState CurrentState { get; private set; } = GameState.Selecting;
     
     public event Action<GameState> OnStateChanged;
-    public event Action<WordData> OnWordSelected;
-    public event Action<WordData> OnWordDeselected;
-    public event Action OnSelectionCleared;
     
-    public int MinWordsToGenerate => minWordsToGenerate;
-    public int MaxWordsToSelect => maxWordsToSelect;
-    public int SelectedWordCount => selectedWords.Count;
-    public bool CanGenerate => selectedWords.Count >= minWordsToGenerate;
-    public bool CanSelectMore => selectedWords.Count < maxWordsToSelect;
+    // StepWordSelector 사용 시 체크
+    public bool CanGenerate => StepWordSelector.Instance != null && StepWordSelector.Instance.IsSelectionComplete;
     
     private void Awake()
     {
@@ -53,7 +39,31 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        ChangeState(GameState.Exploring);
+        // StepWordSelector 이벤트 구독
+        if (StepWordSelector.Instance != null)
+        {
+            StepWordSelector.Instance.OnSelectionComplete += OnSelectionComplete;
+        }
+        
+        ChangeState(GameState.Selecting);
+    }
+    
+    private void OnDestroy()
+    {
+        if (StepWordSelector.Instance != null)
+        {
+            StepWordSelector.Instance.OnSelectionComplete -= OnSelectionComplete;
+        }
+    }
+    
+    private void OnSelectionComplete()
+    {
+        Debug.Log("[GameManager] Selection complete! Ready to generate.");
+        // 사운드 효과
+        if (WordSoundManager.Instance != null)
+        {
+            WordSoundManager.Instance.PlayCompleteSound();
+        }
     }
     
     public void ChangeState(GameState newState)
@@ -67,55 +77,25 @@ public class GameManager : MonoBehaviour
             particleController?.StopMagicEffect();
     }
     
-    public bool SelectWord(WordData word)
-    {
-        if (!CanSelectMore || selectedWords.Contains(word)) return false;
-        
-        selectedWords.Add(word);
-        OnWordSelected?.Invoke(word);
-        
-        if (selectedWords.Count == 1)
-            ChangeState(GameState.Selecting);
-        
-        return true;
-    }
-    
-    public bool DeselectWord(WordData word)
-    {
-        if (!selectedWords.Contains(word)) return false;
-        
-        selectedWords.Remove(word);
-        OnWordDeselected?.Invoke(word);
-        
-        if (selectedWords.Count == 0)
-            ChangeState(GameState.Exploring);
-        
-        return true;
-    }
-    
-    public void ClearSelection()
-    {
-        selectedWords.Clear();
-        OnSelectionCleared?.Invoke();
-        ChangeState(GameState.Exploring);
-    }
-    
+    /// <summary>
+    /// 이미지 생성 시작
+    /// </summary>
     public void StartGeneration()
     {
-        if (!CanGenerate) return;
+        if (!CanGenerate)
+        {
+            Debug.LogWarning("[GameManager] Cannot generate - selection incomplete");
+            return;
+        }
         
         ChangeState(GameState.Generating);
-        string prompt = BuildPrompt();
-        imageGenerator?.GenerateImages(prompt, OnImagesGenerated);
-    }
-    
-    private string BuildPrompt()
-    {
-        List<string> words = new List<string>();
-        foreach (var word in selectedWords)
-            words.Add(word.englishWord);
         
-        return $"A cute, colorful, child-friendly illustration of {string.Join(" ", words)}, cartoon style, bright colors, safe for children";
+        // StepWordSelector에서 프롬프트 가져오기
+        if (imageGenerator != null && StepWordSelector.Instance != null)
+        {
+            string prompt = StepWordSelector.Instance.GetPromptSentence();
+            imageGenerator.GenerateImages(prompt, OnImagesGenerated);
+        }
     }
     
     private void OnImagesGenerated(Texture2D[] images)
@@ -124,7 +104,17 @@ public class GameManager : MonoBehaviour
         resultGallery?.ShowResults(images);
     }
     
-    public void RetryGame() => ClearSelection();
-    
-    public List<WordData> GetSelectedWords() => new List<WordData>(selectedWords);
+    /// <summary>
+    /// 게임 재시작
+    /// </summary>
+    public void RetryGame()
+    {
+        // StepWordSelector 리셋
+        StepWordSelector.Instance?.Reset();
+        
+        // 결과 갤러리 숨기기
+        resultGallery?.HideGallery();
+        
+        ChangeState(GameState.Selecting);
+    }
 }

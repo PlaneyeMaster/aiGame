@@ -1,154 +1,214 @@
 {
     "words": [
         {
-            "word": "Cat",
-            "englishWord": "cat",
-            "category": "Noun"
+            "wordKorean": "강아지",
+            "wordEnglish": "A puppy",
+            "slotType": "Subject",
+            "iconName": "icon_dog",
+            "soundName": "sfx_dog"
         },
         {
-            "word": "Dog",
-            "englishWord": "dog",
-            "category": "Noun"
+            "wordKorean": "고양이",
+            "wordEnglish": "A cat",
+            "slotType": "Subject",
+            "iconName": "icon_cat",
+            "soundName": "sfx_cat"
         },
         {
-            "word": "Robot",
-            "englishWord": "robot",
-            "category": "Noun"
+            "wordKorean": "로봇",
+            "wordEnglish": "A robot",
+            "slotType": "Subject",
+            "iconName": "icon_robot",
+            "soundName": "sfx_robot"
         },
         {
-            "word": "Princess",
-            "englishWord": "princess",
-            "category": "Noun"
+            "wordKorean": "공주님",
+            "wordEnglish": "A princess",
+            "slotType": "Subject",
+            "iconName": "icon_princess",
+            "soundName": "sfx_sparkle"
         },
         {
-            "word": "Alien",
-            "englishWord": "alien",
-            "category": "Noun"
+            "wordKorean": "용",
+            "wordEnglish": "A dragon",
+            "slotType": "Subject",
+            "iconName": "icon_dragon",
+            "soundName": "sfx_dragon"
         },
         {
-            "word": "Dragon",
-            "englishWord": "dragon",
-            "category": "Noun"
+            "wordKorean": "토끼",
+            "wordEnglish": "A rabbit",
+            "slotType": "Subject",
+            "iconName": "icon_rabbit",
+            "soundName": "sfx_rabbit"
         },
         {
-            "word": "Unicorn",
-            "englishWord": "unicorn",
-            "category": "Noun"
+            "wordKorean": "공룡",
+            "wordEnglish": "A dinosaur",
+            "slotType": "Subject",
+            "iconName": "icon_dino",
+            "soundName": "sfx_roar"
         },
         {
-            "word": "Dinosaur",
-            "englishWord": "dinosaur",
-            "category": "Noun"
+            "wordKorean": "요정",
+            "wordEnglish": "A fairy",
+            "slotType": "Subject",
+            "iconName": "icon_fairy",
+            "soundName": "sfx_magic"
         },
         {
-            "word": "Fairy",
-            "englishWord": "fairy",
-            "category": "Noun"
+            "wordKorean": "곰돌이",
+            "wordEnglish": "A teddy bear",
+            "slotType": "Subject",
+            "iconName": "icon_bear",
+            "soundName": "sfx_bear"
         },
         {
-            "word": "Pirate",
-            "englishWord": "pirate",
-            "category": "Noun"
+            "wordKorean": "펭귄",
+            "wordEnglish": "A penguin",
+            "slotType": "Subject",
+            "iconName": "icon_penguin",
+            "soundName": "sfx_penguin"
         },
         {
-            "word": "Dancing",
-            "englishWord": "dancing",
-            "category": "Adjective"
+            "wordKorean": "사과",
+            "wordEnglish": "an apple",
+            "slotType": "Object",
+            "iconName": "icon_apple",
+            "soundName": "sfx_pop"
         },
         {
-            "word": "Fire-breathing",
-            "englishWord": "fire-breathing",
-            "category": "Adjective"
+            "wordKorean": "자동차",
+            "wordEnglish": "a car",
+            "slotType": "Object",
+            "iconName": "icon_car",
+            "soundName": "sfx_car"
         },
         {
-            "word": "Giant",
-            "englishWord": "giant",
-            "category": "Adjective"
+            "wordKorean": "구름",
+            "wordEnglish": "clouds",
+            "slotType": "Object",
+            "iconName": "icon_cloud",
+            "soundName": "sfx_wind"
         },
         {
-            "word": "Transparent",
-            "englishWord": "transparent",
-            "category": "Adjective"
+            "wordKorean": "피자",
+            "wordEnglish": "pizza",
+            "slotType": "Object",
+            "iconName": "icon_pizza",
+            "soundName": "sfx_yum"
         },
         {
-            "word": "Rainbow",
-            "englishWord": "rainbow-colored",
-            "category": "Adjective"
+            "wordKorean": "별",
+            "wordEnglish": "stars",
+            "slotType": "Object",
+            "iconName": "icon_star",
+            "soundName": "sfx_sparkle"
         },
         {
-            "word": "Sparkling",
-            "englishWord": "sparkling",
-            "category": "Adjective"
+            "wordKorean": "무지개",
+            "wordEnglish": "a rainbow",
+            "slotType": "Object",
+            "iconName": "icon_rainbow",
+            "soundName": "sfx_sparkle"
         },
         {
-            "word": "Flying",
-            "englishWord": "flying",
-            "category": "Adjective"
+            "wordKorean": "케이크",
+            "wordEnglish": "a cake",
+            "slotType": "Object",
+            "iconName": "icon_cake",
+            "soundName": "sfx_yum"
         },
         {
-            "word": "Smiling",
-            "englishWord": "smiling",
-            "category": "Adjective"
+            "wordKorean": "풍선",
+            "wordEnglish": "balloons",
+            "slotType": "Object",
+            "iconName": "icon_balloon",
+            "soundName": "sfx_pop"
         },
         {
-            "word": "Sleeping",
-            "englishWord": "sleeping",
-            "category": "Adjective"
+            "wordKorean": "로켓",
+            "wordEnglish": "a rocket",
+            "slotType": "Object",
+            "iconName": "icon_rocket",
+            "soundName": "sfx_rocket"
         },
         {
-            "word": "Magical",
-            "englishWord": "magical",
-            "category": "Adjective"
+            "wordKorean": "아이스크림",
+            "wordEnglish": "ice cream",
+            "slotType": "Object",
+            "iconName": "icon_icecream",
+            "soundName": "sfx_yum"
         },
         {
-            "word": "In Space",
-            "englishWord": "in space",
-            "category": "PlaceAction"
+            "wordKorean": "먹다",
+            "wordEnglish": "eating",
+            "slotType": "Verb",
+            "iconName": "icon_eat",
+            "soundName": "sfx_eat"
         },
         {
-            "word": "On Clouds",
-            "englishWord": "on the clouds",
-            "category": "PlaceAction"
+            "wordKorean": "타다",
+            "wordEnglish": "riding",
+            "slotType": "Verb",
+            "iconName": "icon_ride",
+            "soundName": "sfx_ride"
         },
         {
-            "word": "Under Sea",
-            "englishWord": "under the sea",
-            "category": "PlaceAction"
+            "wordKorean": "그리다",
+            "wordEnglish": "drawing",
+            "slotType": "Verb",
+            "iconName": "icon_draw",
+            "soundName": "sfx_draw"
         },
         {
-            "word": "In Forest",
-            "englishWord": "in the forest",
-            "category": "PlaceAction"
+            "wordKorean": "안다",
+            "wordEnglish": "hugging",
+            "slotType": "Verb",
+            "iconName": "icon_hug",
+            "soundName": "sfx_happy"
         },
         {
-            "word": "In Castle",
-            "englishWord": "in a castle",
-            "category": "PlaceAction"
+            "wordKorean": "날리다",
+            "wordEnglish": "flying",
+            "slotType": "Verb",
+            "iconName": "icon_fly",
+            "soundName": "sfx_fly"
         },
         {
-            "word": "Eating Pizza",
-            "englishWord": "eating pizza",
-            "category": "PlaceAction"
+            "wordKorean": "만들다",
+            "wordEnglish": "making",
+            "slotType": "Verb",
+            "iconName": "icon_make",
+            "soundName": "sfx_make"
         },
         {
-            "word": "Singing",
-            "englishWord": "singing",
-            "category": "PlaceAction"
+            "wordKorean": "찾다",
+            "wordEnglish": "looking for",
+            "slotType": "Verb",
+            "iconName": "icon_search",
+            "soundName": "sfx_search"
         },
         {
-            "word": "Painting",
-            "englishWord": "painting",
-            "category": "PlaceAction"
+            "wordKorean": "좋아하다",
+            "wordEnglish": "loving",
+            "slotType": "Verb",
+            "iconName": "icon_heart",
+            "soundName": "sfx_love"
         },
         {
-            "word": "On Rainbow",
-            "englishWord": "on a rainbow",
-            "category": "PlaceAction"
+            "wordKorean": "놀다",
+            "wordEnglish": "playing with",
+            "slotType": "Verb",
+            "iconName": "icon_play",
+            "soundName": "sfx_play"
         },
         {
-            "word": "On Moon",
-            "englishWord": "on the moon",
-            "category": "PlaceAction"
+            "wordKorean": "선물하다",
+            "wordEnglish": "giving",
+            "slotType": "Verb",
+            "iconName": "icon_gift",
+            "soundName": "sfx_gift"
         }
     ]
 }

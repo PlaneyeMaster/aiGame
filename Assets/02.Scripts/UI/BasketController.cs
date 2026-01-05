@@ -1,24 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 
 /// <summary>
-/// 상상 바구니 UI
+/// 바구니 UI - StepWordSelector 연동
+/// Generate 버튼과 안내 텍스트만 관리
 /// </summary>
 public class BasketController : MonoBehaviour
 {
     public static BasketController Instance { get; private set; }
-
-    [Header("UI")]
-    [SerializeField] private RectTransform basketPanel;
-    [SerializeField] private Transform[] wordSlots;
-    [SerializeField] private TextMeshProUGUI sentencePreview;
+    
+    [Header("Guide Text")]
+    [SerializeField] private GameObject guideTextObject;  // "단어를 선택하세요!" 텍스트 오브젝트
+    
+    [Header("Generate Button")]
+    [SerializeField] private GameObject generateButtonObject;  // 버튼 전체 오브젝트 (표시/숨김용)
     [SerializeField] private Button generateButton;
-    [SerializeField] private TextMeshProUGUI generateButtonText;
-
-    private List<WordData> words = new List<WordData>();
-    private int nextSlot = 0;
 
     private void Awake()
     {
@@ -28,111 +25,71 @@ public class BasketController : MonoBehaviour
 
     private void Start()
     {
+        // 게임 상태 이벤트 구독
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnWordSelected += OnWordSelected;
-            GameManager.Instance.OnWordDeselected += OnWordDeselected;
-            GameManager.Instance.OnSelectionCleared += OnSelectionCleared;
             GameManager.Instance.OnStateChanged += OnGameStateChanged;
+        }
+        
+        // StepWordSelector 이벤트 구독
+        if (StepWordSelector.Instance != null)
+        {
+            StepWordSelector.Instance.OnSelectionComplete += OnSelectionComplete;
         }
 
         if (generateButton != null)
             generateButton.onClick.AddListener(OnGenerateClicked);
 
-        UpdateUI();
+        // 초기 상태 설정
+        ResetUI();
     }
 
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnWordSelected -= OnWordSelected;
-            GameManager.Instance.OnWordDeselected -= OnWordDeselected;
-            GameManager.Instance.OnSelectionCleared -= OnSelectionCleared;
             GameManager.Instance.OnStateChanged -= OnGameStateChanged;
         }
+        
+        if (StepWordSelector.Instance != null)
+        {
+            StepWordSelector.Instance.OnSelectionComplete -= OnSelectionComplete;
+        }
     }
-
-    public Vector3 GetNextSlotPosition()
+    
+    /// <summary>
+    /// UI 초기화 (게임 시작 또는 리셋 시)
+    /// </summary>
+    public void ResetUI()
     {
-        if (wordSlots != null && nextSlot < wordSlots.Length)
-            return wordSlots[nextSlot].position;
-        return basketPanel != null ? basketPanel.position : transform.position;
+        // 안내 텍스트 표시
+        if (guideTextObject != null) guideTextObject.SetActive(true);
+        
+        // Generate 버튼 숨김 및 활성화 상태 복원
+        if (generateButtonObject != null) generateButtonObject.SetActive(false);
+        if (generateButton != null) generateButton.interactable = true;
     }
-
-    private void OnWordSelected(WordData word)
+    
+    /// <summary>
+    /// 선택 완료 시
+    /// </summary>
+    private void OnSelectionComplete()
     {
-        words.Add(word);
-        nextSlot = words.Count;
-        UpdateUI();
-    }
-
-    private void OnWordDeselected(WordData word)
-    {
-        words.Remove(word);
-        nextSlot = words.Count;
-        UpdateUI();
-    }
-
-    private void OnSelectionCleared()
-    {
-        words.Clear();
-        nextSlot = 0;
-        UpdateUI();
+        // Generate 버튼 표시
+        if (generateButtonObject != null) generateButtonObject.SetActive(true);
     }
 
     private void OnGameStateChanged(GameState state)
     {
-        if (generateButton != null)
-            generateButton.interactable = (state == GameState.Selecting && GameManager.Instance.CanGenerate);
-    }
-
-    private void UpdateUI()
-    {
-        // 슬롯 텍스트 업데이트
-        if (wordSlots != null)
+        if (state == GameState.Generating)
         {
-            for (int i = 0; i < wordSlots.Length; i++)
-            {
-                var text = wordSlots[i].GetComponentInChildren<TextMeshProUGUI>();
-                if (text != null)
-                    text.text = i < words.Count ? words[i].word : "?";
-            }
+            // 생성 중에는 버튼 비활성화
+            if (generateButton != null) generateButton.interactable = false;
         }
-
-        // 문장 미리보기
-        if (sentencePreview != null)
+        else if (state == GameState.Selecting)
         {
-            if (words.Count == 0)
-                sentencePreview.text = "Select Word";
-            else
-            {
-                List<string> w = new List<string>();
-                foreach (var word in words) w.Add(word.word);
-                sentencePreview.text = string.Join(" + ", w);
-            }
-        }
-
-        // 버튼 상태
-        UpdateButton();
-    }
-
-    private void UpdateButton()
-    {
-        if (generateButton == null) return;
-
-        bool can = GameManager.Instance != null && GameManager.Instance.CanGenerate;
-        generateButton.interactable = can;
-
-        if (generateButtonText != null)
-        {
-            if (can)
-                generateButtonText.text = "AIgen";
-            else
-            {
-                int need = (GameManager.Instance?.MinWordsToGenerate ?? 2) - words.Count;
-                generateButtonText.text = $"Word {need}gogo";
-            }
+            // 리셋
+            ResetUI();
         }
     }
 
